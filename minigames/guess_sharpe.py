@@ -99,8 +99,9 @@ class GuessSharpeGame:
             self.data = self._generate_round()
             next_round_payload = self._round_payload()
 
-        success = error <= 0.5
-        reward = "Precision Bonus" if error <= 0.2 else "Practice Makes Perfect"
+        tolerance = max(0.05, abs(true_sharpe) * 0.05)  # allow 5% relative error, with a small floor
+        success = error <= tolerance
+        reward = "Precision Bonus" if success else "Practice Makes Perfect"
 
         return {
             "success": success,

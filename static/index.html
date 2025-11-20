@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>PM Simulator</title>
+    <link rel="stylesheet" href="style.css?v=4">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <div class="top-bar">
+                <div class="stat-group">
+                    <span class="label">Week</span>
+                    <span class="value" id="week-display">1</span>
+                </div>
+                <div class="stat-group">
+                    <span class="label">Year</span>
+                    <span class="value" id="year-display">1</span>
+                </div>
+                <div class="stat-group">
+                    <span class="label">Cash</span>
+                    <span class="value" id="cash-display">$1,000,000</span>
+                </div>
+                <div class="stat-group">
+                    <span class="label">AUM</span>
+                    <span class="value" id="aum-display">$50,000,000</span>
+                </div>
+                <div class="stat-group">
+                    <span class="label">Sharpe</span>
+                    <span class="value" id="sharpe-display">0.00</span>
+                </div>
+                <div class="stat-group">
+                    <span class="label">Level <span id="level-display">1</span></span>
+                    <div class="xp-bar-container">
+                        <div id="xp-bar-fill" class="xp-bar-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="action-group">
+                    <input id="save-name-input" type="text" placeholder="save name" value="savegame">
+                    <button id="save-btn" class="secondary-btn">Save</button>
+                    <select id="load-select" class="secondary-select"></select>
+                    <button id="load-btn" class="secondary-btn">Load</button>
+                    <button id="next-turn-btn" class="primary-btn">End Week</button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="main-nav">
+            <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+            <button class="nav-btn" data-tab="research">Research</button>
+            <button class="nav-btn" data-tab="portfolio">Portfolio</button>
+            <button class="nav-btn" data-tab="team">Team</button>
+            <button class="nav-btn" data-tab="infra">Infra</button>
+            <button class="nav-btn" data-tab="minigames">Mini-games</button>
+        </nav>
+
+        <main id="content-area">
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content active">
+                <div class="panel-grid">
+                    <div class="panel" style="grid-column: span 2;">
+                        <h2>Performance History</h2>
+                        <div style="height: 300px; width: 100%;">
+                            <canvas id="pnl-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <h2>Market Environment</h2>
+                        <div class="stats-list">
+                            <div class="stat-row"><span>Current Drawdown:</span> <span id="dd-display">0%</span></div>
+                            <div class="stat-row"><span>Max Drawdown:</span> <span id="max-dd-display">0%</span></div>
+                            <div class="panel">
+                                <h2>Risk & Exposure</h2>
+                                <div class="stats-list">
+                                    <div class="stat-row"><span>Regime:</span> <span id="regime-display">Trendy</span>
+                                    </div>
+                                    <div class="stat-row"><span>Risk Model Level:</span> <span
+                                            id="risk-level-display">1</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <h2>Team Status</h2>
+                                <div class="stats-list">
+                                    <div class="stat-row"><span>Quants:</span> <span id="quant-count-display">0</span>
+                                    </div>
+                                    <div class="stat-row"><span>Avg Happiness:</span> <span
+                                            id="happiness-display">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Research Tab -->
+            <div id="research-tab" class="tab-content">
+                <div class="panel">
+                    <h2>Start New Research</h2>
+                    <div class="control-group">
+                        <label>Style:</label>
+                        <select id="research-style">
+                            <option value="Trend">Trend Following</option>
+                            <option value="MeanReversion">Mean Reversion</option>
+                            <option value="Value">Value</option>
+                            <option value="RiskModel">Risk Model Upgrade</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Research Duration (base):</label>
+                        <select id="research-duration">
+                            <option value="3">Short (3 weeks)</option>
+                            <option value="6">Medium (6 weeks)</option>
+                            <option value="12">Long (12 weeks)</option>
+                        </select>
+                        <span id="research-duration-hint" class="muted-text"></span>
+                    </div>
+                    <button id="start-research-btn" class="secondary-btn">Start Project</button>
+                </div>
+                <div class="panel">
+                    <h2>Ongoing Projects</h2>
+                    <ul id="research-list" class="item-list"></ul>
+                </div>
+                <div class="panel">
+                    <h2>Risk Model Research</h2>
+                    <ul id="risk-research-list" class="item-list"></ul>
+                </div>
+                <div class="panel">
+                    <h2>Completed Alphas</h2>
+                    <ul id="completed-alphas-list" class="item-list"></ul>
+                </div>
+            </div>
+
+            <!-- Portfolio Tab -->
+            <div id="portfolio-tab" class="tab-content">
+                <div class="panel">
+                    <h2>Live Portfolio</h2>
+                    <div id="portfolio-container">
+                        <!-- Alphas will be listed here with weight inputs -->
+                    </div>
+                    <button id="update-portfolio-btn" class="secondary-btn">Update Allocation</button>
+                </div>
+            </div>
+
+            <!-- Team Tab -->
+            <div id="team-tab" class="tab-content">
+                <div class="panel">
+                    <h2>Hire Quant</h2>
+                    <p class="muted-text" style="margin-top:-10px;">Higher skill requires a higher offer. Suggested salary updates as you change skill.</p>
+                    <div class="control-group">
+                        <input type="text" id="hire-name" placeholder="Name">
+                        <input type="number" id="hire-skill" placeholder="Skill (0-100)" value="50">
+                        <input type="number" id="hire-salary" placeholder="Salary" value="100000">
+                        <button id="hire-btn" class="secondary-btn">Hire</button>
+                    </div>
+                    <div id="salary-hint" class="muted-text"></div>
+                </div>
+                <div class="panel">
+                    <h2>Current Team</h2>
+                    <ul id="team-list" class="item-list"></ul>
+                </div>
+            </div>
+
+            <!-- Infra Tab -->
+            <div id="infra-tab" class="tab-content">
+                <div class="panel">
+                    <h2>Infrastructure Levels</h2>
+                    <p class="muted-text" style="margin-top:-10px;">Infra team reduces costs and prevents mishaps. Upgrade to keep research fast and stable.</p>
+                    <ul id="infra-list" class="item-list">
+                        <!-- Infra items with upgrade buttons -->
+                    </ul>
+                </div>
+                <div class="panel">
+                    <h2>Infra Team</h2>
+                    <p class="muted-text" style="margin-top:-10px;">Hire and develop infra specialists to boost all upgrades.</p>
+                    <div class="control-group">
+                        <input type="text" id="hire-infra-name" placeholder="Name">
+                        <input type="number" id="hire-infra-skill" placeholder="Skill (0-100)" value="50" min="1" max="100">
+                        <button id="hire-infra-btn" class="secondary-btn">Start Infra Hire</button>
+                    </div>
+                    <div class="panel" style="background:#161616; border:1px solid #333; margin-top:10px;">
+                        <h3 style="margin-top:0;">Pending Infra Hires</h3>
+                        <ul id="pending-infra-list" class="item-list"></ul>
+                    </div>
+                    <ul id="infra-team-list" class="item-list" style="margin-top:10px;"></ul>
+                </div>
+            </div>
+
+            <!-- Mini-games Tab -->
+            <div id="minigames-tab" class="tab-content">
+                <div class="panel">
+
+                    <h2>Training Center</h2>
+                    <div class="game-card">
+                        <h3>Guess That Sharpe</h3>
+                        <p>Test your intuition by guessing the Sharpe ratio of a return series.</p>
+                        <button id="start-sharpe-game-btn" class="primary-btn">Play</button>
+                    </div>
+                    <div class="game-card">
+                        <h3>Market Making</h3>
+                        <p>Manage inventory and risk by setting spreads in a volatile market.</p>
+                        <button id="start-mm-game-btn" class="primary-btn">Play</button>
+                    </div>
+                    <div class="game-card">
+                        <h3>Market Trivia</h3>
+                        <p>Test your market and quant lore with quick-fire multiple choice rounds.</p>
+                        <button id="start-trivia-game-btn" class="primary-btn">Play</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div id="terminal-container">
+            <div class="terminal-header">
+                <span>> SYSTEM_LOG</span>
+                <span class="blink">_</span>
+            </div>
+            <div id="terminal-output"></div>
+        </div>
+
+        <div id="event-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="event-title">Event Title</h2>
+                <p id="event-desc">Event description goes here.</p>
+                <div id="event-choices" class="choices-container"></div>
+                <button id="close-event-btn" class="secondary-btn">Close</button>
+            </div>
+        </div>
+
+            <div id="minigame-modal" class="modal hidden">
+                <div class="modal-content large-modal">
+                    <h2>Guess That Sharpe</h2>
+                    <div class="mini-hud">
+                        <div>Round <span id="sharpe-round">1</span>/<span id="sharpe-total">10</span></div>
+                        <div>Score <span id="sharpe-score">0</span></div>
+                    </div>
+                    <div id="sharpe-chart-container" style="height: 300px; width: 100%;">
+                        <canvas id="sharpe-chart"></canvas>
+                    </div>
+                    <div class="control-group" style="margin-top: 20px; justify-content: center;">
+                        <label>Your Guess:</label>
+                    <input type="number" id="sharpe-guess" step="0.1" placeholder="e.g. 1.5">
+                    <button id="submit-guess-btn" class="primary-btn">Submit</button>
+                </div>
+                    <div id="minigame-result" class="hidden">
+                        <p id="result-text"></p>
+                        <button id="close-minigame-btn" class="secondary-btn">Close</button>
+                    </div>
+                    <div class="panel" style="margin-top:15px;">
+                        <h3 style="margin-top:0;">Top Scores</h3>
+                        <ul id="sharpe-leaderboard" class="item-list"></ul>
+                    </div>
+                </div>
+            </div>
+
+        <div id="mm-game-modal" class="modal hidden">
+            <div class="modal-content large-modal">
+                <h2>Market Making</h2>
+                <div class="mm-stats">
+                    <div class="stat-box">Round: <span id="mm-round">1</span>/<span id="mm-total">10</span></div>
+                    <div class="stat-box">Mid Price: <span id="mm-price">100.00</span></div>
+                    <div class="stat-box">Inventory: <span id="mm-inventory">0</span></div>
+                    <div class="stat-box">Cash: <span id="mm-cash">0</span></div>
+                    <div class="stat-box">PnL: <span id="mm-pnl">0</span></div>
+                </div>
+                <div class="control-group" style="margin-top: 20px; justify-content: center;">
+                    <label>Half Spread:</label>
+                    <input type="number" id="mm-spread" step="0.05" value="0.50">
+                    <button id="submit-mm-btn" class="primary-btn">Quote</button>
+                </div>
+                <div id="mm-log" class="log-box"></div>
+                <div id="mm-result" class="hidden">
+                    <p id="mm-result-text"></p>
+                    <button id="close-mm-btn" class="secondary-btn">Close</button>
+                </div>
+            </div>
+        </div>
+        <div id="trivia-modal" class="modal hidden">
+            <div class="modal-content large-modal">
+                <h2>Market Trivia</h2>
+                <div class="mini-hud">
+                    <div>Question <span id="trivia-round">1</span>/<span id="trivia-total">3</span></div>
+                    <div>Score <span id="trivia-score">0</span></div>
+                </div>
+                <div id="trivia-question" style="margin: 15px 0; font-weight: 600;"></div>
+                <div id="trivia-options" class="item-list"></div>
+                <div id="trivia-result" class="hidden" style="margin-top:15px;"></div>
+                <button id="close-trivia-btn" class="secondary-btn hidden" style="margin-top:10px;">Close</button>
+            </div>
+        </div>
+        <div id="version-footer" style="text-align: center; color: #666; font-size: 0.8rem; margin-top: 20px;">
+            PM Simulator v4.0 (Cache Bust)
+        </div>
+    </div>
+    <script src="app.js?v=4"></script>
+</body>
+
+</html>

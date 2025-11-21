@@ -191,8 +191,8 @@ function updateUI(data) {
     const portfolioContainer = document.getElementById('portfolio-container');
     portfolioContainer.innerHTML = '';
 
-    // Combine live alphas and ensembles
-    const allAlphas = [...data.alphas.live, ...data.alphas.ensembles];
+    // Combine live alphas, newly researched alphas, and ensembles so players can deploy fresh research
+    const allAlphas = [...data.alphas.live, ...data.alphas.stored_for_ensemble, ...data.alphas.ensembles];
 
     if (allAlphas.length === 0) {
         portfolioContainer.innerHTML = '<p>No live alphas. Go to Research to create some.</p>';
@@ -200,8 +200,9 @@ function updateUI(data) {
         allAlphas.forEach(alpha => {
             const div = document.createElement('div');
             div.className = 'control-group';
+            const deployNote = alpha.status === 'stored_for_ensemble' ? ' — Ready to deploy' : '';
             div.innerHTML = `
-                <label>${alpha.name} (Exp Ret: ${(alpha.current_expected_return * 100).toFixed(1)}%)</label>
+                <label>${alpha.name}${deployNote} (Exp Ret: ${(alpha.current_expected_return * 100).toFixed(1)}%)</label>
                 <input type="number" class="alpha-weight" data-id="${alpha.id}" value="${getWeight(alpha.id, data.portfolio)}" step="0.01" min="0" max="1">
             `;
             portfolioContainer.appendChild(div);

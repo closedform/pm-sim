@@ -1,11 +1,21 @@
 [project]
 name = "pm-sim"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.2.0"
+description = "PM Simulator — build and run a neon-tinged quant fund from a browser UI"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "flask>=3.1.2",
     "numpy>=2.3.5",
     "pandas>=2.3.3",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.3.0",
+]
+
+[dependency-groups]
+test = [
+    "pytest>=8.3.0",
 ]

@@ -11,3 +11,6 @@ wheels/
 
 # Game saves
 saves/
+
+# OS files
+.DS_Store

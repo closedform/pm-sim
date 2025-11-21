@@ -10,6 +10,10 @@ Setup
 2) Run: `uv run app.py`  
 3) Open: http://localhost:5000
 
+Testing
+-------
+- Run all tests: `uv run --group test pytest`
+
 | View                  | Preview                                      |
 |-----------------------|----------------------------------------------|
 | Mini-games hub        | ![Gameplay screenshot](static/images/screenshot_gameplay.png) |
